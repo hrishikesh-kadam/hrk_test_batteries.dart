@@ -1,0 +1,40 @@
+name: ci-dev-main
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+  schedule:
+    # 01:00 PM IST / 7:30 AM GMT every Sunday and Wednesday.
+    - cron: '30 7 * * 0,3'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  ci-dev-main:
+    name: CI on ${{ matrix.runner }} using Dart ${{ matrix.sdk }}
+    runs-on: ${{ matrix.runner }}
+    continue-on-error: true
+    strategy:
+      matrix:
+        runner: [ ubuntu-latest ]
+        sdk: [ dev, main ]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: ${{ matrix.sdk }}
+      - run: ./tool/prerequisite.sh
+      - run: ./tool/ci.sh
+      - uses: codecov/codecov-action@v4
+        with:
+          files: coverage/lcov.info
+          name: ci-${{ matrix.runner }}-${{ matrix.sdk }}
+          token: ${{ secrets.CODECOV_TOKEN }}
