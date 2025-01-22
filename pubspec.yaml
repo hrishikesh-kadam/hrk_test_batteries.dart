@@ -17,4 +17,4 @@ dependencies:
   checks: '>=0.3.0 <1.0.0'
 
 dev_dependencies:
-  hrk_analysis: ^1.0.0
+  hrk_analysis: ">=1.0.0 <3.0.0"
